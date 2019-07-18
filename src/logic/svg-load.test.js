@@ -64,22 +64,29 @@ function hasNonNullAttribute(element, attrName) {
 test('parsing svg', () => {
   let parser = new DOMParser();
   let svgDoc = parser.parseFromString(svgWithStrokeCode, 'image/svg+xml');
-  let elementSelector = '*';
-  let allElements = svgDoc.querySelectorAll(elementSelector);
+  let allElements = svgDoc.querySelectorAll('*');
 
   // expect(allElements.length).toBe(3);
 
   // 1. Parse SVG to retrieve attribute sets
+
+  // This is a 2D array on the form `[[Bool, Bool], [Bool, Bool], ...]`
+  // where each entry at index `i` specifies whether the corresponding node at 
+  // index `i` has a fill and a stroke respectively.
   let attrSets = [];
-  let attrCount = 0;
+
+  let nonNullAttributeCount = 0;
   allElements.forEach((e) => {
     let entry = ['fill', 'stroke'].map((a) => hasNonNullAttribute(e, a));
-    attrCount += entry.filter(v => v).length;
+
+    // Count of all `true` occurrences to calculate the permutation count.
+    nonNullAttributeCount += entry.filter(v => v).length;
+
     attrSets.push(entry);
   });
 
   expect(attrSets.length).toBe(allElements.length);
-  expect(attrCount).toBe(4);
+  expect(nonNullAttributeCount).toBe(4);
 
   // 2. Generate color permutations
   let colors = [
@@ -88,18 +95,37 @@ test('parsing svg', () => {
     'green',
   ];
 
-  let permutationLength = attrCount;
+  // Ex: 4 non-null, non-none `fill`s and 2 non-null, non-none `stroke`s
+  // requires 6 colors in total.
+  let permutationLength = nonNullAttributeCount;
 
   expect(permutationLength).toBe(4);
 
+  /*
+  Example:
+    Given
+    - Permutation length 4
+    - Colors [blue, green, red]
+    the `colorPermutations` array is approximately on the form (sequence 
+    non-critical):
+      [
+        [blue, blue, blue, blue],
+        [blue, blue, blue, green],
+        ...
+      ]
+  */
   let colorPermutations = permutationsWithRepetition(colors, permutationLength);
 
   expect(colorPermutations.length).toBe(Math.pow(colors.length, permutationLength));
 
+  // Loop over the color permutations and apply the colors in sequence to a
+  // clone of the original SVG.
   let svgPerms = [];
   for (const cp of colorPermutations) {
     let copy = svgDoc.cloneNode(true);
 
+    // Use `colorIndex` to traverse the current color permutation. Whenever a
+    // color is used, we increment the `colorIndex` by 1.
     let colorIndex = 0;
     copy.querySelectorAll('*').forEach((node, i) => {
       let [hasFill, hasStroke] = attrSets[i];
