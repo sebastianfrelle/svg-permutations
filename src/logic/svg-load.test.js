@@ -88,8 +88,6 @@ test('parsing svg', () => {
     'green',
   ];
 
-  // For stroke *and* fill, use elems.length
-  //let permutationLength = elems.length;
   let permutationLength = attrCount;
 
   expect(permutationLength).toBe(4);
@@ -102,8 +100,8 @@ test('parsing svg', () => {
   for (const cp of colorPermutations) {
     let copy = svgDoc.cloneNode(true);
 
+    let colorIndex = 0;
     copy.querySelectorAll('*').forEach((node, i) => {
-      let colorIndex = 0;
       let [hasFill, hasStroke] = attrSets[i];
       if (hasFill) {
         node.setAttribute('fill', cp[colorIndex++]);
@@ -117,64 +115,15 @@ test('parsing svg', () => {
     svgPerms.push(copy);
   }
 
-  // // 3. Map each color permutation to a copy of the attribute set collection.
-  // let attrPerms = [];
-  // for (const cp of colorPermutations) {
-  //   // expect(cp.length).toBe(3);
+  expect(svgPerms.length).toBe(colorPermutations.length);
 
-  //   // Clone attribute sets
-  //   let newAttrSets = attrSets.map(a => new AttributeSet(a.fill, a.stroke));
-  //   // expect(newAttrSets.length).toBe(3);
-  //   // expect(computePermutationLength(newAttrSets)).toBe(3);
+  let filePath = index => `./src/logic/output/perm_${index}.svg`;
 
-  //   let colorIndex = 0;
-  //   for (const attrSet of newAttrSets) {
-  //     if (attrSet.fill && attrSet.fill !== 'none') {
-  //       attrSet.fill = cp[colorIndex++];
-  //     }
-
-  //     if (attrSet.stroke && attrSet.stroke !== 'none') {
-  //       attrSet.stroke = cp[colorIndex++];
-  //     }
-  //   }
-
-  //   attrPerms.push(newAttrSets);
-  //   console.log(newAttrSets);
-  // }
-
-  // console.log(attrPerms);
-  // // console.table(attrPerms.map(ap => [ap.fill, ap.stroke]));
-
-  // // 4. Map the attribute set permutations to copies of the SVG.
-  // let svgPerms = [];
-  // for (const ap of attrPerms) {
-  //   let copy = svgDoc.cloneNode(true);
-
-  //   copy.querySelectorAll(elementSelector).forEach((node, i) => {
-  //     if (ap[i].fill && ap[i].fill !== 'none') {
-  //       node.setAttribute('fill', ap[i].fill);
-  //     }
-
-  //     if (ap[i].stroke && ap[i].stroke !== 'none') {
-  //       node.setAttribute('stroke', ap[i].stroke)
-  //     }
-  //   });
-
-  //   svgPerms.push(copy);
-  // }
-
-  // expect(svgPerms.length).toBe(colorPermutations.length);
-
-  // let filePath = index => `./src/logic/output/perm_${index}.svg`;
-
-  // // Write to output files
-  // cleanOutputFolder();
-  // for (let i = 0; i < svgPerms.length; i++) {
-  //   fs.writeFileSync(filePath(i), svgPerms[i].documentElement.outerHTML, console.log);
-  // }
-
-  // // Write files to Svelte component
-  // let componentFilepath = `./src/view/Output.svelte`;
+  // Write to output files
+  cleanOutputFolder();
+  for (let i = 0; i < svgPerms.length; i++) {
+    fs.writeFileSync(filePath(i), svgPerms[i].documentElement.outerHTML, console.log);
+  }
 });
 
 function cleanOutputFolder() {
