@@ -30,31 +30,6 @@ let svgWithStrokeCode = `
 </svg>
 `;
 
-/**
- * Represents the fill/stroke combination for a single SVG element.
- */
-class AttributeSet {
-  constructor (fill, stroke) {
-    this.fill = fill;
-    this.stroke = stroke;
-  }
-}
-
-function computePermutationLength(attributeSets) {
-  let l = 0;
-  for (const attrSet of attributeSets) {
-    if (attrSet.fill && attrSet.fill !== 'none') {
-      l++;
-    }
-
-    if (attrSet.stroke && attrSet.stroke !== 'none') {
-      l++;
-    }
-  }
-
-  return l;
-}
-
 function hasNonNullAttribute(element, attrName) {
   let attr = element.getAttribute(attrName);
 
