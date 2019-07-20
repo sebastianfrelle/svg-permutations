@@ -15,8 +15,12 @@
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-terser": "^4.0.4",
-    "svelte": "^3.0.0"
+    "svelte": "^3.0.0",
+    "ws": ">=3.3.1"
   },
+  "//": [
+    "2019-07-20: ws added as devDependency b/c security vulnerability was identified by Github."
+  ],
   "dependencies": {
     "sirv-cli": "^0.4.4"
   },
