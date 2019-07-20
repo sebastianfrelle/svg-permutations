@@ -1,7 +1,7 @@
 <script>
   let elems = [];
   let outputDirPath = "/output/";
-  let iterationCount = 80;
+  let iterationCount = 100;
 
   let filepath = index => `${outputDirPath}perm_${index}.svg`;
   let i = 0;
